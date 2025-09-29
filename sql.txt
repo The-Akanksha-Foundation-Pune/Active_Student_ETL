@@ -1,0 +1,31 @@
+CREATE TABLE IF NOT EXISTS active_student_data (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    school_name VARCHAR(255) NOT NULL,
+    status VARCHAR(50),
+    grade_name VARCHAR(50),
+    student_name VARCHAR(500) NOT NULL,
+    student_id VARCHAR(50) NOT NULL,
+    gender CHAR(50),
+    division_name VARCHAR(10) NOT NULL,
+    academic_year VARCHAR(10) NOT NULL,
+    unique_key VARCHAR(255) NOT NULL,
+    timestamp TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
+);
+
+-- Add UNIQUE index to unique_key
+-- This will fail if there are existing duplicates. You'd need to clean them first.
+ALTER TABLE active_student_data
+ADD CONSTRAINT UQ_unique_key UNIQUE (unique_key);
+
+-- Create the history table
+CREATE TABLE IF NOT EXISTS student_data_history (
+    history_id INT AUTO_INCREMENT PRIMARY KEY,
+    unique_key VARCHAR(255) NOT NULL,
+    change_type ENUM('INSERT', 'UPDATE', 'INACTIVATE') NOT NULL,
+    field_changed VARCHAR(255), -- Name of the field that was changed
+    old_value TEXT,             -- Old value of the field
+    new_value TEXT,             -- New value of the field
+    change_timestamp DATETIME NOT NULL,
+    INDEX (unique_key), -- Index for faster lookups based on unique_key
+    INDEX (change_timestamp) -- Index for time-based queries
+);
