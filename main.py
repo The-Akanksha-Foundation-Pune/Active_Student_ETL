@@ -106,8 +106,8 @@ def main():
 
         if unique_key not in existing_keys:
             logging.info(f"{log_prefix} Unique Key {unique_key} is NEW. Attempting to insert.")
-            insert_new_record(cursor, processed_record, unique_key, academic_year)
-            new_records_count += 1
+            if insert_new_record(cursor, processed_record, unique_key, academic_year):
+                new_records_count += 1
         else:
             logging.debug(f"{log_prefix} Unique Key {unique_key} ALREADY EXISTS. Attempting to update.")
             update_existing_record(cursor, processed_record, unique_key)

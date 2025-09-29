@@ -158,12 +158,15 @@ def insert_new_record(cursor, record, unique_key, academic_year):
         ))
         logging.info(f"Inserted new record for Unique Key: {unique_key}. School: {cleaned_school_name}, Student: {cleaned_student_name}.")
         log_history(cursor, unique_key, 'INSERT', 'New Record', None, "Initial Insertion") # Log initial insertion
+        return True  # Return True for successful insertion
     except mysql.connector.Error as err:
         # Check if the error is due to a duplicate unique_key (e.g., race condition)
         if err.errno == 1062: # MySQL error code for Duplicate entry for key 'PRIMARY' or unique constraint
             logging.warning(f"Attempted to insert duplicate unique key {unique_key}. Likely a race condition or already exists. Skipping insertion.")
+            return False  # Return False for failed insertion
         else:
-            logging.error(f"Error inserting record for Unique Key {unique_key}: {err}", exc_info=True)
+            logging.error(f"Database error during insertion of {unique_key}: {err}")
+            raise err
 
 def fetch_duplicate_records(cursor):
     try:

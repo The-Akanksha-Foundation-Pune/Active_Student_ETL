@@ -61,11 +61,15 @@ def validate_student_record(record):
     Validates a single student record.
     Returns (True, record) if valid, (False, error_message) otherwise.
     """
-    required_fields = ['school_name', 'status', 'grade_name', 'student_name', 'student_id', 'gender', 'division_name']
+    required_fields = ['school_name', 'grade_name', 'student_name', 'student_id', 'gender', 'division_name']
     
     for field in required_fields:
         if field not in record or not trim_string(record[field]): # Check for existence and non-empty after trimming
             return False, f"Missing or empty required field: '{field}'"
+    
+    # Handle empty status field by defaulting to "Active"
+    if not trim_string(record.get('status', '')):
+        record['status'] = 'Active'
             
     # Basic data type checks and specific value validations
     if not isinstance(record.get('student_id'), (str, int)):
